@@ -23,7 +23,7 @@ class PublicUserAPITests(TestCase):
         payload = {
             'email': 'test@company.com',
             'password': 'testpass',
-            'name': 'testuser'
+            'name': 'testuser',
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
@@ -31,13 +31,14 @@ class PublicUserAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         user = get_user_model().objects.get(**res.data)
         self.assertTrue(user.check_password(payload['password']))
-        self.assertNotIn('password', **res.data)
+        self.assertNotIn('password', res.data)
 
     def test_user_exists(self):
         """Test creating user that already exists fails"""
         payload = {
             'email': 'test@company.com',
             'password': 'testpass',
+            'name': 'testuser',
         }
         create_user(**payload)
 
@@ -50,6 +51,7 @@ class PublicUserAPITests(TestCase):
         payload = {
             'email': 'test@company.com',
             'password': 'test',
+            'name': 'testuser',
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
@@ -58,4 +60,4 @@ class PublicUserAPITests(TestCase):
         user_exists = get_user_model().objects.filter(
             email=payload['email']
         ).exists()
-        self.asseertFalse(user_exists)
+        self.assertFalse(user_exists)
